@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>نتائج الطلاب - الترم الأول</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin: 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      font-size: 1.4rem;
+      opacity: 0.9;
+    }
+
+    .ranking-table {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #4a00e0;
+      color: white;
+      padding: 18px 12px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    td {
+      padding: 16px 12px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:nth-child(-n+3) td {
+      background: linear-gradient(to left, #ffd700, #ffec8b);
+      font-weight: bold;
+      color: #8B4513;
+    }
+
+    tr:nth-child(1) .rank { 
+      background: gold; 
+      color: #8B4513; 
+      font-size: 1.5rem;
+    }
+    tr:nth-child(2) .rank { 
+      background: silver; 
+      color: #555;
+    }
+    tr:nth-child(3) .rank { 
+      background: #cd7f32; 
+      color: white;
+    }
+
+    .rank {
+      font-weight: bold;
+      font-size: 1.3rem;
+      width: 60px;
+      border-radius: 50%;
+      padding: 8px;
+    }
+
+    .student-name {
+      text-align: right;
+      font-weight: 600;
+      font-size: 1.1rem;
+      max-width: 300px;
+    }
+
+    .total {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #4a00e0;
+    }
+
+    .absent {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      color: white;
+      margin-top: 40px;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+      tr {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+      }
+      td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+      }
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>نتائج الطلاب</h1>
+      <p class="subtitle">الترتيب حسب المجموع الكلي (تنازلي)</p>
+    </header>
+
+    <div class="ranking-table">
+      <table>
+        <thead>
+          <tr>
+            <th>الترتيب</th>
+            <th>اسم الطالب</th>
+            <th>العربية</th>
+            <th>الإنجليزية</th>
+            <th>الرياضيات</th>
+            <th>الفيزياء</th>
+            <th>الدين</th>
+            <th>التربية الوطنية</th>
+            <th>المجموع</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTable">
+          <!-- سيتم ملؤها بواسطة JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <footer>
+      <p>تم ترتيب الطلاب تلقائيًا حسب المجموع الكلي - تمنياتنا بالتوفيق للجميع</p>
+    </footer>
+  </div>
+
+  <script>
+    const students = [
+      {"الاسم": "احمد السعيد السيد طه سرحان", "Arabic": 17.5, "English": 18.5, "Math": "غ", "Physics": 14.5, "المجموع": 50.5, "Religion": 8.0, "Citizenship": 8.5},
+      {"الاسم": "احمد السيد محمد احمد عثمان", "Arabic": 18.0, "English": 14.5, "Math": 20.0, "Physics": 19.0, "المجموع": 71.5, "Religion": 8.5, "Citizenship": 10.0},
+      {"الاسم": "احمد حماده محمد احمد", "Arabic": 14.5, "English": 15.0, "Math": 17.5, "Physics": 14.0, "المجموع": 61.0, "Religion": 8.0, "Citizenship": 10.0},
+      {"الاسم": "احمد محجوب شعبان محمد القصاص", "Arabic": 18.0, "English": 14.0, "Math": 20.0, "Physics": 16.5, "المجموع": 68.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "احمد محمد احمد الصادق محمد زكي", "Arabic": 15.0, "English": 18.5, "Math": 19.0, "Physics": 17.0, "المجموع": 69.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "ادم عماد محمد عدلى", "Arabic": 14.0, "English": 15.5, "Math": 13.0, "Physics": 9.0, "المجموع": 51.5, "Religion": 7.0, "Citizenship": 4.0},
+      {"الاسم": "آسر على احمد محمد على", "Arabic": 17.0, "English": 17.5, "Math": 20.0, "Physics": 17.0, "المجموع": 71.5, "Religion": 8.5, "Citizenship": 9.5},
+      {"الاسم": "اسلام منصور عبدالحليم برين", "Arabic": 19.0, "English": 19.5, "Math": 19.5, "Physics": 17.0, "المجموع": 75.0, "Religion": 10.0, "Citizenship": 9.5},
+      {"الاسم": "الفولي يحيي فولي حسن", "Arabic": 18.5, "English": 14.0, "Math": 14.0, "Physics": 17.0, "المجموع": 63.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "المعتزبالله باسم ممدوح سيد عفيفي", "Arabic": 16.5, "English": 14.5, "Math": 15.0, "Physics": 12.5, "المجموع": 58.5, "Religion": 8.0, "Citizenship": 8.5},
+      {"الاسم": "انس رمضان ابراهيم عبد الحميد تقي الدين", "Arabic": 15.5, "English": 10.5, "Math": 15.0, "Physics": 11.0, "المجموع": 52.0, "Religion": 8.5, "Citizenship": 6.5},
+      {"الاسم": "اياد علي جمعه شعبان علي", "Arabic": 15.5, "English": 15.0, "Math": 19.0, "Physics": 18.0, "المجموع": 67.5, "Religion": 8.0, "Citizenship": 9.0},
+      {"الاسم": "اياد مصطفي ابراهيم محمود عبدالله", "Arabic": 14.0, "English": 17.5, "Math": 20.0, "Physics": 18.0, "المجموع": 69.5, "Religion": 6.0, "Citizenship": 8.5},
+      {"الاسم": "بيشوي جورجيوس عريان شكري خليل", "Arabic": 16.0, "English": 4.5, "Math": 18.0, "Physics": 11.0, "المجموع": 49.5, "Religion": 8.5, "Citizenship": 9.5},
+      {"الاسم": "تيم الله احمد عمر محمد عبدالعزبز كامل", "Arabic": 14.0, "English": 17.5, "Math": 11.0, "Physics": 11.5, "المجموع": 54.0, "Religion": 9.0, "Citizenship": 8.0},
+      {"الاسم": "حسام اشرف المصري سليمان المصري", "Arabic": 16.5, "English": 15.0, "Math": 12.5, "Physics": 12.5, "المجموع": 56.5, "Religion": 8.5, "Citizenship": 7.0},
+      {"الاسم": "حمزة محمد عبدالمطلب مصيلحي محمد حسن", "Arabic": 16.5, "English": 16.5, "Math": 20.0, "Physics": 17.0, "المجموع": 70.0, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "رافائيل نادي فهيم سدراك غطاس", "Arabic": 13.0, "English": "غ", "Math": 19.0, "Physics": 14.0, "المجموع": 46.0, "Religion": 7.5, "Citizenship": "غ"},
+      {"الاسم": "عبدالرحمن علي عيد هاشم علي", "Arabic": 13.0, "English": 15.0, "Math": 16.5, "Physics": 11.5, "المجموع": 56.0, "Religion": 8.5, "Citizenship": 8.0},
+      {"الاسم": "عبدالرحمن عمادالدين مجدي محمود ماضى ياقوت", "Arabic": 15.0, "English": 19.0, "Math": 17.5, "Physics": 18.5, "المجموع": 70.0, "Religion": 7.0, "Citizenship": 9.0},
+      {"الاسم": "عبدالرحمن محمد حامد السيد المليجي", "Arabic": 17.5, "English": 19.5, "Math": 17.5, "Physics": 17.5, "المجموع": 72.0, "Religion": 8.0, "Citizenship": 8.5},
+      {"الاسم": "عبدالرحمن ناصر مصطفي عبدالرحمن مبروك", "Arabic": 12.5, "English": 18.5, "Math": 12.5, "Physics": 18.0, "المجموع": 61.5, "Religion": 5.5, "Citizenship": 8.5},
+      {"الاسم": "عبدالعزيز حسن محمد يعقوب عبدالسيد", "Arabic": 12.5, "English": 17.5, "Math": 18.0, "Physics": 18.5, "المجموع": 66.5, "Religion": 8.5, "Citizenship": 10.0},
+      {"الاسم": "عبدالله عمرو عبدالله محمود ايوب", "Arabic": 18.0, "English": 18.0, "Math": 18.5, "Physics": 17.0, "المجموع": 71.5, "Religion": 10.0, "Citizenship": 9.0},
+      {"الاسم": "عمر علي عمر هجرس", "Arabic": 14.0, "English": 20.0, "Math": 19.5, "Physics": 19.0, "المجموع": 72.5, "Religion": 9.5, "Citizenship": 10.0},
+      {"الاسم": "عمر محمد كمال محمد مصطفي", "Arabic": 15.0, "English": 16.0, "Math": 16.5, "Physics": 9.0, "المجموع": 56.5, "Religion": 9.0, "Citizenship": 7.0},
+      {"الاسم": "عمر محمد محمود محمد عطا", "Arabic": 18.5, "English": 20.0, "Math": 20.0, "Physics": 18.0, "المجموع": 76.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "فخرالدين ابراهيم نادي ابراهيم احمد", "Arabic": 18.0, "English": 15.5, "Math": 19.0, "Physics": 15.0, "المجموع": 67.5, "Religion": 7.5, "Citizenship": 8.0},
+      {"الاسم": "مالك جميل السيد حسين عبد الشافي", "Arabic": 15.5, "English": 18.5, "Math": 20.0, "Physics": 20.0, "المجموع": 74.0, "Religion": 5.5, "Citizenship": 6.5},
+      {"الاسم": "مجدي عبدالغفار محمد عبدالغفار عرفه زيدان", "Arabic": 15.5, "English": 7.0, "Math": 20.0, "Physics": 16.0, "المجموع": 58.5, "Religion": 7.5, "Citizenship": 10.0},
+      {"الاسم": "محمد احمد احمد حسين عبدالخالق", "Arabic": 19.0, "English": 16.5, "Math": 20.0, "Physics": 19.0, "المجموع": 74.5, "Religion": 8.5, "Citizenship": 8.5},
+      {"الاسم": "محمد سعيد عبدالمنعم عباس ابراهيم", "Arabic": 19.0, "English": 18.0, "Math": 20.0, "Physics": 19.0, "المجموع": 76.0, "Religion": 10.0, "Citizenship": 9.5},
+      {"الاسم": "محمد سيد مصطفي فرحات ابراهيم", "Arabic": 13.0, "English": 6.5, "Math": 15.0, "Physics": 15.5, "المجموع": 50.0, "Religion": 8.5, "Citizenship": 9.5},
+      {"الاسم": "محمد محمود سعيد غريب ابراهيم", "Arabic": 19.0, "English": 15.0, "Math": 13.0, "Physics": 13.0, "المجموع": 60.0, "Religion": 10.0, "Citizenship": 9.0},
+      {"الاسم": "مروان حسين جمال حسين", "Arabic": 18.0, "English": 19.0, "Math": 20.0, "Physics": 20.0, "المجموع": 77.0, "Religion": 8.5, "Citizenship": 10.0},
+      {"الاسم": "مشاري عبدالحميد شحاته عبدالناصر جمعه", "Arabic": 20.0, "English": 20.0, "Math": 20.0, "Physics": 19.0, "المجموع": 79.0, "Religion": 9.5, "Citizenship": 10.0},
+      {"الاسم": "مصطفي الحسين محمد دسوقي حميده", "Arabic": 13.5, "English": 11.0, "Math": 17.5, "Physics": 15.5, "المجموع": 57.5, "Religion": 7.5, "Citizenship": 9.5},
+      {"الاسم": "مصطفي محمود مصطفي عبدالجواد مصطفي", "Arabic": 15.5, "English": 18.0, "Math": 18.0, "Physics": 18.5, "المجموع": 70.0, "Religion": 9.0, "Citizenship": 10.0},
+      {"الاسم": "معاذ محمد مصطفي كمال محمد جعيصه", "Arabic": 12.5, "English": 19.0, "Math": 17.5, "Physics": 14.5, "المجموع": 63.5, "Religion": 8.0, "Citizenship": 9.5},
+      {"الاسم": "معتصم محمد يسري سعدي داوي القاضي التميمي", "Arabic": 16.5, "English": 16.0, "Math": 19.0, "Physics": 18.0, "المجموع": 69.5, "Religion": 5.0, "Citizenship": 9.0},
+      {"الاسم": "مهاب محمد هليل سنوسي مدكور", "Arabic": 18.0, "English": 16.0, "Math": 20.0, "Physics": 18.5, "المجموع": 72.5, "Religion": 7.0, "Citizenship": 8.5},
+      {"الاسم": "مهند صبري فوزي محمد الطنبشاوي", "Arabic": 15.0, "English": 17.0, "Math": 15.5, "Physics": 8.5, "المجموع": 56.0, "Religion": 7.0, "Citizenship": 9.0},
+      {"الاسم": "ياسين بلال مصطفى حسين", "Arabic": 15.0, "English": 13.5, "Math": 19.0, "Physics": 16.0, "المجموع": 63.5, "Religion": 8.0, "Citizenship": 9.0},
+      {"الاسم": "ياسين خالد احمد عبداللطيف ثابت", "Arabic": 15.5, "English": 17.5, "Math": 15.0, "Physics": 19.0, "المجموع": 67.0, "Religion": 5.0, "Citizenship": 8.5},
+      {"الاسم": "ياسين عبدالله فتحي عبدالله", "Arabic": 17.5, "English": 14.5, "Math": 18.5, "Physics": 16.5, "المجموع": 67.0, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "يس محمد ثروت محمود توفيق", "Arabic": 18.0, "English": 12.5, "Math": 17.0, "Physics": 14.0, "المجموع": 61.5, "Religion": 6.5, "Citizenship": 9.5},
+      {"الاسم": "يوثام سمير نسيم بولس عبد السيد", "Arabic": 19.5, "English": 17.0, "Math": 19.0, "Physics": 19.5, "المجموع": 75.0, "Religion": 9.5, "Citizenship": 10.0},
+      {"الاسم": "يوسف احمد فتحي عبدالقادر", "Arabic": 13.0, "English": 19.5, "Math": 20.0, "Physics": 17.0, "المجموع": 69.5, "Religion": 7.5, "Citizenship": 7.0},
+      {"الاسم": "يوسف ايمن نعيم تادرس يوسف", "Arabic": 13.5, "English": 18.5, "Math": 19.0, "Physics": 20.0, "المجموع": 71.0, "Religion": 9.5, "Citizenship": 9.0},
+      {"الاسم": "يوسف عبد الهادى قبيصى محمد", "Arabic": 14.0, "English": 11.0, "Math": 18.5, "Physics": 18.0, "المجموع": 61.5, "Religion": 8.0, "Citizenship": 7.0},
+      {"الاسم": "يوسف محمد محمد سليم بركات", "Arabic": 20.0, "English": 19.5, "Math": 20.0, "Physics": 20.0, "المجموع": 79.5, "Religion": 9.0, "Citizenship": 9.0},
+      {"الاسم": "يوسف هيثم يوسف احمد الشاعر", "Arabic": 12.5, "English": 20.0, "Math": 20.0, "Physics": 19.0, "المجموع": 71.5, "Religion": 7.0, "Citizenship": 7.5},
+      {"الاسم": "اروي ايمن احمد حماد علي", "Arabic": 18.5, "English": 13.5, "Math": 18.5, "Physics": 19.0, "المجموع": 69.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "الاء هريدي سيد محمد السيد", "Arabic": 19.0, "English": 15.0, "Math": 20.0, "Physics": 17.0, "المجموع": 71.0, "Religion": 8.0, "Citizenship": 9.5},
+      {"الاسم": "امل سيد توفيق ميرغني احمد", "Arabic": 16.0, "English": 14.0, "Math": 20.0, "Physics": 17.0, "المجموع": 67.0, "Religion": 7.5, "Citizenship": 9.0},
+      {"الاسم": "ايتن وهبه محمد وهبه محمد خليل", "Arabic": 18.5, "English": 12.5, "Math": 16.0, "Physics": 16.0, "المجموع": 63.0, "Religion": 10.0, "Citizenship": 10.0},
+      {"الاسم": "بسنت احمد عبد المنعم عبد الواحد جنيدي", "Arabic": 18.0, "English": 16.0, "Math": 20.0, "Physics": 16.0, "المجموع": 70.0, "Religion": 10.0, "Citizenship": 9.0},
+      {"الاسم": "تسنيم ناصر السيد محمد شحاته", "Arabic": 20.0, "English": 18.5, "Math": 20.0, "Physics": 20.0, "المجموع": 78.5, "Religion": 9.5, "Citizenship": 8.5},
+      {"الاسم": "جني احمد اسماعيل حسين احمد", "Arabic": 14.5, "English": 10.5, "Math": 15.0, "Physics": 10.0, "المجموع": 50.0, "Religion": 5.5, "Citizenship": 6.0},
+      {"الاسم": "جني احمد عفيفي محمد ابراهيم", "Arabic": 14.5, "English": 15.5, "Math": 19.5, "Physics": 17.0, "المجموع": 66.5, "Religion": 7.5, "Citizenship": 8.0},
+      {"الاسم": "جومانه احمد محمد سيد رمضان", "Arabic": 18.5, "English": 19.0, "Math": 17.0, "Physics": 16.0, "المجموع": 70.5, "Religion": 9.0, "Citizenship": 8.5},
+      {"الاسم": "حبيبه احمد محمد محمد عبيد", "Arabic": 17.0, "English": 15.5, "Math": 20.0, "Physics": 15.5, "المجموع": 68.0, "Religion": 10.0, "Citizenship": 10.0},
+      {"الاسم": "حبيبه محسن سيد طه دومه", "Arabic": "غ", "English": 9.0, "Math": 17.5, "Physics": 10.0, "المجموع": 36.5, "Religion": "غ", "Citizenship": 9.5},
+      {"الاسم": "حلا احمد محمد صابر", "Arabic": 18.5, "English": 20.0, "Math": 18.0, "Physics": 20.0, "المجموع": 76.5, "Religion": 9.0, "Citizenship": 10.0},
+      {"الاسم": "خديجه خالد احمد فرغلي احمد", "Arabic": 18.5, "English": 15.5, "Math": 20.0, "Physics": 19.0, "المجموع": 73.0, "Religion": 10.0, "Citizenship": 8.5},
+      {"الاسم": "رحمه محمود محمد عبدالقادر احمد لاشين", "Arabic": 16.0, "English": 16.0, "Math": 19.0, "Physics": 10.5, "المجموع": 46.5, "Religion": 8.0, "Citizenship": 8.0},
+      {"الاسم": "ردينه محمد عيسي عباس محمد", "Arabic": 20.0, "English": 20.0, "Math": 20.0, "Physics": 20.0, "المجموع": 80.0, "Religion": 9.5, "Citizenship": 9.5},
+      {"الاسم": "رضوي صابر بطايحي عبدالحليم", "Arabic": 16.5, "English": 12.0, "Math": 18.5, "Physics": 17.5, "المجموع": 64.5, "Religion": 7.5, "Citizenship": 9.0},
+      {"الاسم": "رنا حسين علي احمد", "Arabic": 17.0, "English": 5.0, "Math": 13.0, "Physics": 11.5, "المجموع": 46.5, "Religion": 5.0, "Citizenship": 7.0},
+      {"الاسم": "روان ناجي عبدالرحمن محمد الصعيدي", "Arabic": 18.0, "English": 17.0, "Math": 20.0, "Physics": 18.5, "المجموع": 73.5, "Religion": 9.5, "Citizenship": 9.0},
+      {"الاسم": "رؤي وائل علي محمود محمد", "Arabic": 14.5, "English": 16.0, "Math": 20.0, "Physics": 19.5, "المجموع": 70.0, "Religion": 9.5, "Citizenship": 10.0},
+      {"الاسم": "ساره محمد نصر عبدالله احمد", "Arabic": 14.5, "English": 14.5, "Math": 19.5, "Physics": 20.0, "المجموع": 68.5, "Religion": 9.0, "Citizenship": 9.0},
+      {"الاسم": "سلمي تامر سامي حسن محمد", "Arabic": 14.0, "English": 15.5, "Math": 16.5, "Physics": 12.0, "المجموع": 58.0, "Religion": 9.0, "Citizenship": 8.0},
+      {"الاسم": "سما احمد فايز احمد مهدي الكردي", "Arabic": 19.5, "English": 13.5, "Math": 20.0, "Physics": 17.5, "المجموع": 70.5, "Religion": 8.5, "Citizenship": 10.0},
+      {"الاسم": "فاطمة هشام كمال الدين موسي ابراهيم", "Arabic": 17.0, "English": 18.0, "Math": 16.5, "Physics": 20.0, "المجموع": 71.5, "Religion": 9.5, "Citizenship": 9.0},
+      {"الاسم": "فريده مصطفى حسين احمد عبدالله", "Arabic": 12.5, "English": 17.5, "Math": 19.5, "Physics": 17.0, "المجموع": 66.5, "Religion": 10.0, "Citizenship": 9.0},
+      {"الاسم": "كرمه احمد ممدوح عبدالفتاح عثمان جبر", "Arabic": 16.5, "English": 19.0, "Math": 20.0, "Physics": 13.5, "المجموع": 69.0, "Religion": 10.0, "Citizenship": 9.5},
+      {"الاسم": "ملك احمد عبدالعزيز عبدالفتاح عنايه", "Arabic": 19.0, "English": 19.0, "Math": 18.5, "Physics": 17.0, "المجموع": 73.5, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "ملك عبده محمد عبده عبدالرحمن", "Arabic": 14.0, "English": 14.5, "Math": 16.5, "Physics": 12.5, "المجموع": 57.5, "Religion": 9.0, "Citizenship": 7.0},
+      {"الاسم": "ملك محمد احمد حسانين عثمان", "Arabic": 18.0, "English": 19.0, "Math": 20.0, "Physics": 20.0, "المجموع": 77.0, "Religion": 7.5, "Citizenship": 9.0},
+      {"الاسم": "ملك محمد السيد محمود", "Arabic": 19.0, "English": 18.5, "Math": 19.5, "Physics": 17.0, "المجموع": 74.0, "Religion": 6.5, "Citizenship": 8.5},
+      {"الاسم": "منه محمد صلاح فهمي شريف", "Arabic": 14.5, "English": 12.0, "Math": 20.0, "Physics": 15.5, "المجموع": 62.0, "Religion": 9.0, "Citizenship": 9.5},
+      {"الاسم": "منه ياسر محمد عبد السلام", "Arabic": 16.0, "English": 19.5, "Math": 20.0, "Physics": 19.0, "المجموع": 74.5, "Religion": 8.0, "Citizenship": 9.5},
+      {"الاسم": "ميار ناصر جمال شحاته مصطفى", "Arabic": 15.0, "English": 16.5, "Math": 15.5, "Physics": 12.5, "المجموع": 59.5, "Religion": 8.0, "Citizenship": 9.5},
+      {"الاسم": "هاجر سعيد حامد محمود حنك", "Arabic": 13.5, "English": 9.0, "Math": 18.5, "Physics": 12.5, "المجموع": 53.5, "Religion": 9.5, "Citizenship": 9.0},
+      {"الاسم": "هدي عزت غازي السيد عوض سلامه", "Arabic": 19.0, "English": 11.0, "Math": 19.0, "Physics": 10.0, "المجموع": 59.0, "Religion": 9.0, "Citizenship": 10.0},
+      {"الاسم": "هدير عادل رمضان محمود متولي", "Arabic": 20.0, "English": 18.5, "Math": 14.5, "Physics": 19.5, "المجموع": 72.5, "Religion": 8.5, "Citizenship": 10.0},
+      {"الاسم": "يارا وليد درويش محمد سيد جاد", "Arabic": 17.0, "English": 15.5, "Math": 17.0, "Physics": 13.0, "المجموع": 62.5, "Religion": 9.5, "Citizenship": 10.0}
+    ];
+
+    // ترتيب الطلاب تنازليًا حسب المجموع
+    students.sort((a, b) => b["المجموع"] - a["المجموع"]);
+
+    const tableBody = document.getElementById("studentsTable");
+
+    students.forEach((student, index) => {
+      const row = document.createElement("tr");
+
+      const displayGrade = (grade) => grade === "غ" ? '<span class="absent">غ</span>' : grade;
+
+      row.innerHTML = `
+        <td class="rank">${index + 1}</td>
+        <td class="student-name" data-label="الاسم">${student["الاسم"]}</td>
+        <td data-label="العربية">${displayGrade(student.Arabic)}</td>
+        <td data-label="الإنجليزية">${displayGrade(student.English)}</td>
+        <td data-label="الرياضيات">${displayGrade(student.Math)}</td>
+        <td data-label="الفيزياء">${displayGrade(student.Physics)}</td>
+        <td data-label="الدين">${displayGrade(student.Religion)}</td>
+        <td data-label="التربية الوطنية">${displayGrade(student.Citizenship)}</td>
+        <td class="total" data-label="المجموع">${student["المجموع"]}</td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+  </script>
+</body>
+</html>
